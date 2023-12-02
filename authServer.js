@@ -20,10 +20,9 @@ app.use(express.json())
 // will be emptied out when the server restarts
 let refreshTokens = []
 
-/*
 app.post('/token', (req, res) => {
   const refreshToken = req.body.token
-  if (refreshToken == null) return res.sendStatus(401) // if there is no refresh token, then it is not valid
+  if (refreshToken == null) return res.sendStatus(401) // 
   if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403) // if the refresh token is not in the list of refresh tokens, then it is not valid
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
     if (err) return res.sendStatus(403)
@@ -31,24 +30,6 @@ app.post('/token', (req, res) => {
     res.json({ accessToken: accessToken })
   })
 })
-*/
-
-function verifyToken(refreshToken, refreshTokens) {
-  if (refreshToken == null) return { status: 401 }; // if there is no refresh token, then it is not valid
-  if (!refreshTokens.includes(refreshToken)) return { status: 403 }; // if the refresh token is not in the list of refresh tokens, then it is not valid
-  let user;
-  try {
-    user = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-  } catch (err) {
-    return { status: 403 };
-  }
-  const accessToken = generateAccessToken({ name: user.name });
-  return { status: 200, accessToken: accessToken };
-}
-
-module.exports = verifyToken;
-
-
 
 app.delete('/logout', (req, res) => {
   refreshTokens = refreshTokens.filter(token => token !== req.body.token)
